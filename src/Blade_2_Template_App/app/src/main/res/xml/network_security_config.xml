@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Allow cleartext (HTTP) traffic to the face recognition server -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">192.168.1.201</domain>
+    </domain-config>
+
+    <!-- For other domains, use default secure settings -->
+    <base-config cleartextTrafficPermitted="false" />
+</network-security-config>

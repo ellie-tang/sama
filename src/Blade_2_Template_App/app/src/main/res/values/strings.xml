@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">AI-assistant</string>
+    <string name="appwidget_text_light">AI assistant app SAMA (Light)</string>
+    <string name="appwidget_text_dark">AI assistant app SAMA</string>
+    <string name="appwidget_text">AI assistant app SAMA</string>
+    <string name="showHelloToast">Show Hello Toast</string>
+    <string name="showVuzixToast">Show Vuzix Toast</string>
+    <string name="showBladeToast">Show Blade Toast</string>
+    <string name="showHelloToast2">Select to show the Hello Toast</string>
+    <string name="showVuzixToast2">Select to show the Vuzix Toast</string>
+    <string name="showBladeToast2">Select to show the Blade Toast</string>
+    <string name="centerContent">Launch Center Content style activity</string>
+    <string name="aroundContent">Launch Around Content Lock style activity</string>
+    <string name="showAroundContent">Show Around Content style activity</string>
+    <string name="showCenterContent">Show Center Content style activity</string>
+    <string name="showPopUpMenu">Show Pop Up Menu style activity</string>
+    <string name="Hello">Hello World!</string>
+    <string name="Vuzix">Vuzix!</string>
+    <string name="Blade1">Blade!</string>
+    <string name="Blade">%d Blade!</string>
+    <string name="CenterContentInfo">Center Content style means that the View or real estate available is in the center and is locked
+    to that position. The Action menu moves underneath the main UI area.</string>
+    <string name="PoPContentInfo">Popup menu style means that the action menu is hidden,
+        giving you full real estate. The Action menu will "Pop Up" with a Single Tap on the touch pad.
+        To Hide the Action Menu do a two finger tap(back gesture)</string>
+    <string name="AroundContentInfo">Around Content style means that the View or real estate available is AROUND the center of the screen.</string>
+    <string name="AroundContentInfo2">The Action menu moves in the CENTER of the main UI area.</string>
+</resources>
