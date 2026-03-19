@@ -24,15 +24,6 @@ In this repository, the implemented stack is centered on:
 
 The repo still ships the face-recognition path as the most directly integrated flow today, but it now also includes the first dedicated code for speech data collection, dataset growth, and model-training support.
 
-## Latest Changes
-
-Recent additions in this repo:
-
-- `src/audio-training/` adds a Vuzix Blade 2 audio self-training subsystem with Android capture classes, a Python ingestion backend, Whisper ASR adapters, Qwen3.5 9B labeling logic, review-queue handling, and nightly CBA-Whisper retraining helpers.
-- `src/audio-training/audio-training-plan-and-summary.txt` records the implementation plan, module map, and current status of the audio-training work.
-- `src/text-training/` adds a text-training package for data preparation, prompt templating, tokenization, LoRA-oriented training/eval scripts, and example configuration.
-- `tests/` is now the central test root for audio-training, text-training, backend webserver, and frontend app contract tests.
-
 ## Repository Layout
 
 ```text
