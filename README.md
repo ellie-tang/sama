@@ -1,8 +1,13 @@
 # SAMA
 
-SAMA is a smart-glasses AI assistant project for dementia support. The current repository combines a Vuzix Blade 2 frontend, a FastAPI image-processing server, and a face-memory backend that recognizes people, recalls stored identity context, and pushes live prompts back to the glasses HUD.
+SAMA is a smart-glasses AI assistant project for dementia support. The repository now contains four active workstreams:
 
-`Vuzix Blade 2` | `FastAPI` | `InsightFace` | `OpenAI-backed memory layer`
+- a Vuzix Blade 2 frontend for live HUD interaction
+- a FastAPI image-processing server
+- a face-memory backend for recognition and recall
+- new audio-training and text-training subsystems for ASR improvement and speech normalization workflows
+
+`Vuzix Blade 2` | `FastAPI` | `InsightFace` | `Whisper` | `Qwen3.5 9B`
 
 ## Overview
 
@@ -14,8 +19,19 @@ In this repository, the implemented stack is centered on:
 - server-side face recognition and identity recall
 - HUD display updates and optional text-to-speech prompts
 - persistent face memory, conversation history, and summaries
+- an audio self-training pipeline for disordered speech collection and Whisper retraining
+- a text-training pipeline for prompt-based transcript correction experiments
 
-The broader project vision also includes speech normalization and continuously improving ASR. That speech pipeline is part of the project concept, but the code currently in this repo is primarily the face-recognition and prompt-delivery path.
+The repo still ships the face-recognition path as the most directly integrated flow today, but it now also includes the first dedicated code for speech data collection, dataset growth, and model-training support.
+
+## Latest Changes
+
+Recent additions in this repo:
+
+- `src/audio-training/` adds a Vuzix Blade 2 audio self-training subsystem with Android capture classes, a Python ingestion backend, Whisper ASR adapters, Qwen3.5 9B labeling logic, review-queue handling, and nightly CBA-Whisper retraining helpers.
+- `src/audio-training/audio-training-plan-and-summary.txt` records the implementation plan, module map, and current status of the audio-training work.
+- `src/text-training/` adds a text-training package for data preparation, prompt templating, tokenization, LoRA-oriented training/eval scripts, and example configuration.
+- `tests/` is now the central test root for audio-training, text-training, backend webserver, and frontend app contract tests.
 
 ## Repository Layout
 
@@ -29,6 +45,12 @@ sama/
 │   │   │   ├── FaceRecognitionApiClient.java
 │   │   │   └── FaceRecognitionBroadcastReceiver.java
 │   │   └── client-server-api-spec.md
+│   ├── audio-training/               # Audio self-training subsystem
+│   │   ├── android/                  # Blade 2 microphone/camera collection path
+│   │   ├── server/                   # FastAPI-style ingestion and training orchestration
+│   │   ├── shared/                   # Shared contracts and prompts
+│   │   ├── scripts/                  # Retraining / manifest helpers
+│   │   └── audio-training-plan-and-summary.txt
 │   └── aiserver/
 │       ├── LLM_Facial_Memory_System/ # Face memory and conversation layer
 │       │   ├── app.py
@@ -41,8 +63,16 @@ sama/
 │       │   ├── api/endpoints.py
 │       │   └── services/face_recognition_service.py
 │       └── requirements.txt
+│   └── text-training/                # Text normalization / LoRA training package
+│       ├── text_training/
+│       ├── configs/
+│       └── scripts/
 ├── docs/
 └── tests/
+    ├── audio_training/
+    ├── backend_webserver/
+    ├── frontend_app/
+    └── text_training/
 ```
 
 ## How It Works
@@ -65,6 +95,9 @@ sama/
 - conversation and summary storage per recognized face
 - HUD-first recognition feedback on Vuzix Blade 2
 - optional TTS name announcements for recognized people
+- audio conversation collection and labeling infrastructure for self-training
+- dataset manifest generation and nightly retraining scaffolding for Whisper
+- text-training utilities for transcript correction experiments with LoRA-style fine-tuning
 
 ## Preferred Setup
 
@@ -227,12 +260,35 @@ For more detail, see:
 - `src/aiserver/CLIENT_API_SPECIFICATION.md`
 - `src/Blade_2_Template_App/client-server-api-spec.md`
 
+The new audio-training backend also exposes a separate API surface in `src/audio-training/server/router.py`, including:
+
+- `POST /audio-training/ingest`
+- `GET /audio-training/reviews`
+- `POST /audio-training/reviews/{review_task_id}`
+- `POST /audio-training/retrain`
+- `GET /audio-training/health`
+
+This router is implemented as a self-contained subsystem and is ready to be registered in the main FastAPI service or run as a dedicated process.
+
+## Testing
+
+Repository test coverage is now grouped under `tests/`:
+
+- `tests/frontend_app/` validates Blade app source and manifest contracts
+- `tests/backend_webserver/` validates the FastAPI webserver helpers, config, schemas, and service formatting behavior
+- `tests/audio_training/` covers the new audio-training pipeline logic
+- `tests/text_training/` covers the text-training package
+
+Some tests are source-contract tests rather than runtime instrumentation tests. In this environment, `compileall` verification was completed, but running the full Python test suite still depends on local installation of `pytest`, `fastapi`, and `pydantic`.
+
 ## Development Notes
 
 - uploaded images are saved temporarily by the web server and then deleted after processing
 - the web server wraps the legacy face-memory app instead of reimplementing recognition logic
 - relationship values are currently placeholder mappings in `face_recognition_service.py`
-- the current repo is strongest on face recognition and recall; speech support is still a project direction rather than a finished implementation here
+- `src/audio-training/` contains the new speech self-training code but is not yet wired into the existing Android manifest or the active `src/aiserver/webserver/main.py` app
+- `src/text-training/` is currently a standalone training package and script set, not yet integrated into a deployed runtime path
+- the face-recognition flow remains the most integrated end-to-end path in the repo today
 
 ## Research / Safety Note
 
