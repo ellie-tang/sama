@@ -1,0 +1,80 @@
+{
+  "model": {
+    "base_model_name": "REPLACE_WITH_QWEN3_5_9B_MODEL_ID",
+    "tokenizer_name": "",
+    "dtype": "bfloat16",
+    "device_map": "auto",
+    "load_in_4bit": false,
+    "trust_remote_code": true
+  },
+  "data": {
+    "whisper_path": "data/whisper_nbest.jsonl",
+    "vlm_path": "data/vlm_context.jsonl",
+    "references_path": "data/references.jsonl",
+    "train_path": "src/text-training/artifacts/dataset/train.jsonl",
+    "val_path": "src/text-training/artifacts/dataset/val.jsonl",
+    "test_path": "src/text-training/artifacts/dataset/test.jsonl",
+    "output_dir": "src/text-training/artifacts/dataset",
+    "top_k_hypotheses": 5,
+    "include_confidence_scores": true,
+    "include_timestamps": false,
+    "include_visual_context": true,
+    "train_split": 0.8,
+    "val_split": 0.1,
+    "seed": 17
+  },
+  "prompt": {
+    "include_system_prompt": true,
+    "system_prompt": "You are a second-pass transcription corrector. Use the n-best hypotheses and scene context to produce the single best transcript. Return transcript only.",
+    "task_prompt": "Resolve ASR ambiguity using the candidates and context. Prefer fluent, semantically coherent text.",
+    "answer_prefix": "Final transcript:",
+    "include_confidence_scores": true,
+    "include_visual_context": true
+  },
+  "lora": {
+    "rank": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "bias": "none",
+    "task_type": "CAUSAL_LM",
+    "target_modules": [
+      "k_proj",
+      "v_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ]
+  },
+  "train": {
+    "output_dir": "src/text-training/artifacts/checkpoints",
+    "max_seq_length": 2048,
+    "learning_rate": 0.0002,
+    "batch_size": 1,
+    "gradient_accumulation_steps": 16,
+    "num_train_epochs": 3,
+    "warmup_ratio": 0.03,
+    "weight_decay": 0.0,
+    "logging_steps": 10,
+    "eval_steps": 100,
+    "save_steps": 100,
+    "save_total_limit": 2,
+    "fp16": false,
+    "bf16": true,
+    "gradient_checkpointing": true,
+    "resume_from_checkpoint": "",
+    "report_to": []
+  },
+  "eval": {
+    "output_dir": "src/text-training/artifacts/eval",
+    "prediction_input_path": "",
+    "metrics_output_path": "src/text-training/artifacts/eval/metrics.json",
+    "predictions_output_path": "src/text-training/artifacts/eval/predictions.jsonl"
+  },
+  "generation": {
+    "max_new_tokens": 128,
+    "temperature": 0.0,
+    "do_sample": false,
+    "num_beams": 1,
+    "repetition_penalty": 1.05
+  }
+}
